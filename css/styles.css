@@ -1,0 +1,30 @@
+ /* Додаємо прості стилі для галереї */
+ body {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   margin: 0;
+ }
+
+ .gallery {
+   display: flex;
+   flex-wrap: wrap;
+   gap: 16px;
+   list-style: none;
+   padding: 0;
+   width: 80%;
+ }
+
+ .gallery-item {
+   max-width: 400px;
+ }
+
+ .gallery-link {
+   text-decoration: none;
+ }
+
+ .gallery-image {
+   width: 100%;
+   height: auto;
+   border-radius: 8px;
+ }
