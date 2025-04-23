@@ -1,7 +1,7 @@
  /* Додаємо прості стилі для галереї */
  body {
    display: flex;
-   flex-direction:row ;
+   flex-direction: row;
    justify-content: center;
    align-items: center;
    margin: 0;
@@ -10,22 +10,37 @@
  .gallery {
    display: flex;
    flex-wrap: wrap;
+   justify-content: center;
    gap: 16px;
    list-style: none;
    padding: 0;
-   width: 80%;
+   margin: 0 auto;
+   width: 100%;
+   max-width: 1200px;
+
  }
 
  .gallery-item {
-   max-width: 250px;
+   flex: 1 1 calc(300px - 16px);
+   max-width: calc(300px - 16px);
+   box-sizing: border-box;
+   overflow: hidden;
+   border-radius: 8px;
  }
 
  .gallery-link {
    text-decoration: none;
+   display: block;
  }
 
  .gallery-image {
    width: 100%;
    height: auto;
    border-radius: 8px;
+   transition: transform 0.3s ease;
+
+ }
+
+ .gallery-image:hover {
+   transform: scale(1.05);
  }

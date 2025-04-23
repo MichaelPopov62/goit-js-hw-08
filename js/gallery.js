@@ -66,7 +66,7 @@ const images = [
 ];
 
 // Функція для створення шаблону одного елемента
-function imgTemplate({ original, preview, description }) {
+  function imgTemplate({ original, preview, description }) {
   return `
     <li class="gallery-item">
       <a class="gallery-link" href="${original}">
@@ -74,47 +74,74 @@ function imgTemplate({ original, preview, description }) {
       </a>
     </li>`;
 }
-// Функція для створення всієї на основі масиву зображень 
+
+// Функція для створення всієї галереї на основі масиву зображень 
 function imagesTemplate(images) {
   
-  // Метод map створює масив рядків-розмітки, які потім об'єднуються в один рядок
+// Метод map створює масив рядків-розмітки, які потім об'єднуються в один рядок
   return images.map(imgTemplate).join('');
 }
-// Знаходимо елемент з класом ul.gallery галереї
-const galleryElem = document.querySelector('.gallery');
 
-// Перевіряємо, чи існує елемент
-if (galleryElem) {
-  // Створюємо розмітку та додаємо її всередину елемента
-  const markup = imagesTemplate(images);
+// Знаходжу елемент з класом ul.gallery галереї
+  const galleryElem = document.querySelector('.gallery');
 
-  // використовую метод для додавання рядка в існуючую розмітку в положення всередину тега ul
-  galleryElem.insertAdjacentHTML('beforeend', markup);
+// Перевіряю, чи існує елемент
+  if (galleryElem) {
+// Створюю розмітку та додаємо її всередину елемента
+    const markup = imagesTemplate(images);
 
-  // Додаємо обробник подій  на клик по зображенню
-  galleryElem.addEventListener('click', event => {
-    //цей метод скасовує стандарну поведінку браузера (перехід за посиланням)
-    event.preventDefault();
+// використовую метод для додавання рядка в існуючую розмітку в положення всередину тега ul
+    galleryElem.insertAdjacentHTML('beforeend', markup);
 
-    // Перевіряємо, чи клік відбувся на посиланні з класом .gallery-link
-    const link = event.target.closest('.gallery-link');
+// Додаю обробника подіі на клик галереі.Делегуванн подіі  через елемент galleryElem
+    galleryElem.addEventListener('click', event => {
 
-    // Перевіряємо, чи клік був на посиланні.Якщо клік був не на дочірньому елементі або на самому контейнері, нічого не робимо
+//Додаю метод який скасовує стандарну поведінку браузера (перехід за посиланням)
+      event.preventDefault();
 
-    if (link)
-    {
-      console.log(`Клік по зображенню: ${link.href}`);
-       
+// Перевіряю, чи клік відбувся на посиланні,знаходжу найближчий батьківський єдемент з класом .gallery-link
+      const link = event.target.closest('.gallery-link');
 
-      // Тут можна додати додаткову логіку (наприклад, відкриття модального вікна)
-    }
-    // if (link) {
-    //   const imageSrc = link.href;
-    //   openModal(imageSrc); // Ваша функція для відкриття модального вікна
-    // }
-  });
-} else {
-  //  Якщо елемент .gallery не знайдено, виводимо повідомлення в консоль
+// Перевіряємо, чи клік був на посиланні.Якщо клік був не на посиланні, нічого не робимо
+      if (link) {
+        console.log(`Клік по зображенню: ${link.href}`);
+
+// Створюю нову змінну для модального вікна де буду URL великого зображення з атрибута href
+        const imageSrc = link.href;
+
+//Створюю  модальне вікно з використанням basicLightbox
+        const instance = basicLightbox.create(
+          `<img src="${imageSrc}" 
+    alt="Modal Image"
+    style="border: 4px solid black; border-radius: 8px;"
+    />`,
+          {
+// Додаю  опцію для відкриття по кліку, за допомогою обробника подіі keydown клавіши Escape
+            onShow: instance => {
+              document.addEventListener('keydown', onEscapePress);
+            },
+
+//Додаю опцію закриття модального вікна,за допомогою обробника подіі keydown клавіши Escape
+            onClose: instance => {
+              document.removeEventListener('keydown', onEscapePress);
+            },
+          }
+        );
+
+// додаю метод який відкриває модальне вікно
+        instance.show();
+
+// Функція для закриття модального вікна при натисканні. В цей момент викликається метод onClose, перевірка визначає дійсно була натиснута кнопка Escape. Коли відбувається клік поза зображення воно автоматично закриваеться бо ця функція закладена в бібліотеці
+        function onEscapePress(event) {
+          if (event.key === 'Escape') {
+            instance.close();
+          }
+        }
+      }
+    });
+  }
+ else {
+//  Якщо елемент .gallery не знайдено, виводимо повідомлення в консоль
   console.error("Елемент '.gallery' не знайдено.");
 }
 
