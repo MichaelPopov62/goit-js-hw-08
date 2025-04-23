@@ -1,6 +1,7 @@
  /* Додаємо прості стилі для галереї */
  body {
    display: flex;
+   flex-direction:row ;
    justify-content: center;
    align-items: center;
    margin: 0;
