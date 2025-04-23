@@ -101,7 +101,7 @@ if (galleryElem) {
 
     // Перевіряємо, чи клік був на посиланні.Якщо клік був не на дочірньому елементі або на самому контейнері, нічого не робимо
 
-    if (!link || event.target === event.currentTarget) return;
+    if (link)
     {
       console.log(`Клік по зображенню: ${link.href}`);
        
