@@ -65,74 +65,100 @@ const images = [
   },
 ];
 
-// Функція для створення шаблону одного елемента
-  function imgTemplate({ original, preview, description }) {
-    return `
-      <li class="gallery-item">
-        <a class="gallery-link" href="${original}">
-          <img class="gallery-image" src="${preview}" alt="${description}" />
-        </a>
-      </li>`;
+
+
+//Створюю функцію для створення шаблону одного, прописую потрібні атрибути  в шаблоні
+  function imgTemplate({ original, preview, description })
+  {
+    return `<li class="gallery-item">
+      <a class="gallery-link" href="${original}">
+       <img
+        class="gallery-image"
+        src="${preview}"
+         data-source="${original}"
+          alt="${description}"
+    />
+  </a>
+</li>
+`;
 }
 
-/* Функція для створення всієї галереї на основі масиву зображень.Повертає HTML рядок із шаблонами всіх елементів галереї*/
- function imagesTemplate(images) {
-  
-// Метод map створює масив рядків-розмітки, які потім об'єднуються в один рядок
-  return images.map(imgTemplate).join('');
+/* Створюю функцію для створення всієї галереї на основі масиву зображень.Повертає HTML рядок із шаблонами всіх елементів галереї*/
+function imagesTemplate(images) {
+  // Створюємо порожній масив для зберігання рядків розмітки
+  const markupArray = [];
+
+// Перебираємо кожен елемент масиву images
+  for (const image of images) {
+
+/* Викликаємо функцію imgTemplate для кожного елемента,зберігаю створену розмітку у змінній markup і додаю результат до масиву */
+    const markup = imgTemplate(image);
+    markupArray.push(markup);
+  }
+
+/* Об'єдную всі рядки з масиву markupArray в один HTML-рядок, який представляє готову розмітку для всієі галереі.Метод join('') з'єднує елементи масиву без додаткових роздільників */
+  const finalMarkup = markupArray.join('');
+
+// Повертаємо об'єднаний рядок
+  return finalMarkup;
 }
 
-// Знаходжу елемент з класом ul.gallery галереї
-  const galleryElem = document.querySelector('.gallery');
+/* Знаходжу перший елемент на сторінці з класом ul.gallery галереї.Використовую метод querySelector-який повертає перший знайдений єлемент якій відповідає селектору.Якщо такий єлемент існує то galleryElem буде містить цей елемент,якщо ні тоді буде null */
+const galleryElem = document.querySelector('.gallery');
 
-// Перевіряю, чи існує елемент ('.gallery') щоб уникнути помилки
-  if (galleryElem) {
-    
+//Дивлюся в консолі результат пошуку
+  console.log('Елемент галереі знайдено', galleryElem);
+
+// Перевіряю, чи точно існує елемент ('.gallery') щоб уникнути помилки
+ if (galleryElem) {
+
 // Створюю розмітку та додаємо її всередину елемента
   const markup = imagesTemplate(images);
 
+//Виводжу в консоль повний код HTML- галереі створений функцією magesTemplate
+  // console.log('Розмітка:', markup);
+
 // використовую метод для додавання рядка в існуючую розмітку в положення всередину тега ul
-    galleryElem.insertAdjacentHTML('beforeend', markup);
+  galleryElem.insertAdjacentHTML('beforeend', markup);
 
 // Додаю обробника подіі на клик галереі.Делегування подіі через елемент galleryElem
-  galleryElem.addEventListener('click', event => {
-    //Додаю метод який скасовує стандарну поведінку браузера (перехід за посиланням)
+   galleryElem.addEventListener('click', event => {
+    
+// Додаю метод який скасовує стандарну поведінку браузера (перехід за посиланням)
     event.preventDefault();
 
-    // Перевіряю, чи клік відбувся на зображення.
+// Перевіряю, чи клік відбувся на зображення.
     const img = event.target;
 
-    // Перевіряю.Якщо клік був не на зображенні нічого не робимо
+// Перевіряю.Якщо клік був не на зображенні нічого не робимо
     if (img.nodeName !== 'IMG') return;
 
-    /*отримую посилання, яке містить велике зображення.Отримуємо parentElement оскільки img є дочерній єлемент.Link це батьківський єлемент <a> який містить велике зображення */
-    const link = img.parentElement;
+/* отримую значеня з data -атрибуту source елемента img, який містить посилання на велике зображення в модальному вікні*/
+    const imageSrc = img.dataset.source;
 
-    //якщо посилання не знайдено, нічого не робимо
-    if (!link) return;
-    // Виводжу в консоль результат про клік по зображенню
-    console.log(`Клік по зображенню : ${link.href}`);
+// якщо зображення не знайдено, нічого не робимо
+     if (!imageSrc) return;
+     
+// Виводжу в консоль результат про клік по зображенню
+    // console.log(`Клік по зображенню : ${imageSrc}`);
 
-    /*Створюю  модальне вікно з використанням basicLightbox зовнішньої бібліотеки
-  imageSrc-це змінна яка містить в собі URL великого зображення яке відобразиться в модальному вікні. instance-цезмінна яка містить екземпляр модального вікна.create- це функція створює модальне вікно*/
-    const imageSrc = link.href;
+// Створюю модальне вікно з використанням basicLightbox зовнішньої бібліотеки 
+
     const instance = basicLightbox.create(
       `<img src="${imageSrc}" 
-    alt="Modal Image"
-    style="border: 4px solid black; border-radius: 8px;"
-    
+          alt="${img.alt}"
+          style="border: 4px solid black; border-radius: 8px;"
     />`
-    );
+     );
+//Виводжу шлях зображення яке виводиться в модальному вікні
+     console.log('Модальне вікно відкривається з :', imageSrc);
 
-    // додаю метод який відкриває модальне вікно. За замовчуванням модальне вікно закривається, коли робиш клік за межі його вмісту.
+// Додаю метод який відкриває модальне вікно. За замовчуванням модальне вікно закривається, коли робиш клік на зображення або за межі його вмісту.
     instance.show();
-
-    
   });
-  }
- else {
-//  Якщо елемент .gallery не знайдено, виводимо повідомлення в консоль
+ } else {
+   
+// Якщо елемент .gallery не знайдено, виводимо повідомлення в консоль
   console.error("Елемент '.gallery' не знайдено.");
 }
-
 
